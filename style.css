@@ -232,6 +232,7 @@
     font-size: 0.7rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
+    margin-top: 95px;
     color: var(--accent);
     margin-bottom: 1.5rem;
     display: flex;

@@ -1,0 +1,85 @@
+{
+  "videos": [
+    {
+      "id": "1190672192",
+      "titulo": "Demo — Trabajos Audiovisuales",
+      "categoria": "Reel · 2025",
+      "coverUrl": "https://i.vimeocdn.com/video/2155509855-8b5e98c3e4d227cdb221decb51ef29cbd8feb69cb709742fff4b11e49c59905e-d_295x166?region=us",
+      "destacado": true
+    },
+    {
+      "id": "1190612327",
+      "titulo": "Octava Club — Identidad Digital",
+      "categoria": "Contenido Orgánico · Nightlife · 2025",
+      "coverUrl": "https://i.vimeocdn.com/video/2155435425-4d04f80bea427fcec10b0f68d2469224ca3b29a80ba5eb77e4b9f98beb07db3d-d_295x166?region=us",
+      "destacado": false
+    },
+    {
+      "id": "1190611070",
+      "titulo": "Proyecto Personal — Livestyle",
+      "categoria": "Dirección Creativa · 2025",
+      "coverUrl": "https://i.vimeocdn.com/video/2155433755-42d72b8b0d4cd8d452daaa75f674f010774a098b219690f31666b553ef3a696e-d_295x166?region=us",
+      "destacado": false
+    }
+  ],
+
+  "experiencia": [
+    {
+      "empresa": "Octava Club",
+      "fechas": "Nov 2024 — Dic 2025",
+      "cargo": "Equipo Creativo · Redes & Marketing",
+      "descripcion": "Producción y dirección de contenido audiovisual para el sector nightlife. Desarrollo de identidad digital de marca, creación de piezas enfocadas en experiencia y ambiente, y participación activa en campañas de visibilidad y crecimiento en redes sociales.",
+      "tags": ["Filmmaking", "Dirección Creativa", "Identidad de Marca", "Redes Sociales"]
+    },
+    {
+      "empresa": "Tik Talent SAS",
+      "fechas": "2022 — 2024",
+      "cargo": "Estratega de Contenido Digital",
+      "descripcion": "Desarrollo de estrategias personalizadas para creadores de contenido, optimización de calendarios de publicación y análisis de métricas clave — engagement, alcance y comportamiento de audiencia. Implementación de mejoras para maximizar rendimiento en redes sociales con enfoque en dinámicas reales de consumo digital.",
+      "tags": ["Estrategia de Contenido", "Análisis de Métricas", "TikTok", "Optimización"]
+    },
+    {
+      "empresa": "Emprenditoria",
+      "fechas": "2023 — 2024",
+      "cargo": "Asesor Comercial & Gestión de Redes Sociales · @emprenditoria.col",
+      "descripcion": "Gestión integral de redes sociales enfocada en visibilidad de productos, creación de contenido promocional orientado a conversión, atención a clientes en canales digitales y físicos, y elaboración de reportes de desempeño para optimización continua.",
+      "tags": ["Social Media", "Conversión", "Contenido Promocional", "Reportes"]
+    },
+    {
+      "empresa": "Encanta Accesorios",
+      "fechas": "2023 — 2024",
+      "cargo": "Asesor Comercial · Ventas & Social Media",
+      "descripcion": "Diseño de estrategias de contenido orientadas a ventas, gestión de redes sociales para campañas digitales, interacción directa con clientes y apoyo en posicionamiento de marca en el mercado digital.",
+      "tags": ["Ventas", "Posicionamiento", "Campañas Digitales"]
+    }
+  ],
+
+  "testimonios": [
+    {
+      "texto": "Mateo entiende el negocio antes de encender la cámara. Sus reels para el club generaron un aumento real en visitas. No es solo un editor, es alguien que piensa en resultados.",
+      "nombre": "Carlos R.",
+      "cargo": "Director · Octava Club",
+      "iniciales": "CR"
+    },
+    {
+      "texto": "La estrategia de contenido que Mateo desarrolló para mi perfil de creador transformó mis métricas en pocas semanas. Sabe exactamente qué funciona en cada plataforma.",
+      "nombre": "Valentina Duque",
+      "cargo": "Creadora de Contenido · TikTok @unatomboy_",
+      "iniciales": "VD"
+    },
+    {
+      "texto": "Trabajar con Mateo fue encontrar a alguien que combina creatividad con análisis. Cada pieza de contenido tenía un propósito claro y los resultados lo demostraron.",
+      "nombre": "María P.",
+      "cargo": "Fundadora · Emprenditoria",
+      "iniciales": "MP"
+    }
+  ],
+
+  "redes": {
+    "whatsapp": "https://wa.me/573104509595",
+    "email": "mateoflorez4422@gmail.com",
+    "instagram": "",
+    "youtube": "",
+    "linkedin": ""
+  }
+}

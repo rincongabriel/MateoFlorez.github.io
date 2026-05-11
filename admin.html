@@ -683,7 +683,7 @@
   <div class="login-box">
     <div class="login-logo">Mateo Flórez · Studio</div>
     <h1 class="login-title">Panel de administración</h1>
-    <p class="login-sub">Ingresa tu contraseña para acceder.</p>
+    <p class="login-sub">Ingresa tu contraseña para acceder. La primera vez también necesitas tu GitHub Token.</p>
 
     <div class="field">
       <label>Contraseña</label>
@@ -714,6 +714,7 @@
       </button>
       <button class="btn-logout" onclick="mostrarCambiarPassword()" style="border-color:var(--border);">🔑 Contraseña</button>
       <button class="btn-logout" onclick="logout()">Salir</button>
+      <button class="btn-logout" onclick="olvidarToken()" style="font-size:11px;padding:6px 10px;" title="Quitar token guardado">🔑 Token</button>
     </div>
   </div>
 
@@ -844,11 +845,11 @@
 // CONFIGURACIÓN
 // ============================================================
 const CONFIG = {
-  repoOwner: 'rincongabrielgit ',     // Tu usuario de GitHub
-  repoName:'MateoFlores.github.io',   // El nombre exacto de tu repositorio
+  repoOwner: 'rincongabriel',     // Tu usuario de GitHub
+  repoName: 'NOMBRE-DEL-REPO',   // El nombre exacto de tu repositorio
   dataPath: 'data.json',          // Ruta del archivo dentro del repo
   // Token de GitHub — solo tú lo ves en el código
-  githubToken: 'PEGA_TU_GITHUB_TOKEN_AQUI',
+  githubToken: '', // Se carga desde localStorage — nunca va en el código
   // Contraseña maestra de emergencia — solo tú la sabes
   // Está hasheada: nunca aparece en texto plano
   masterHash: '324adeed26b9112913942a024e9e8df528a057eb5e8313fde74b4978fafaa342'
@@ -889,6 +890,18 @@ async function login() {
     error.textContent = 'Escribe tu contraseña.';
     error.style.display = 'block';
     return;
+  }
+
+  // Si no hay token guardado, tomarlo del campo y guardarlo
+  if (!CONFIG.githubToken) {
+    const tokenIngresado = document.getElementById('inputToken')?.value?.trim();
+    if (!tokenIngresado) {
+      error.textContent = 'La primera vez necesitas ingresar tu GitHub Token.';
+      error.style.display = 'block';
+      return;
+    }
+    CONFIG.githubToken = tokenIngresado;
+    localStorage.setItem('github_token', tokenIngresado);
   }
 
   const hash = await hashear(pass);
@@ -935,10 +948,28 @@ function logout() {
   location.reload();
 }
 
+function olvidarToken() {
+  if (confirm('¿Quitar el token guardado? La próxima vez tendrás que ingresarlo de nuevo.')) {
+    localStorage.removeItem('github_token');
+    localStorage.removeItem('admin_session');
+    CONFIG.githubToken = '';
+    location.reload();
+  }
+}
+
 // Auto-login por sesión activa en el mismo navegador
 window.addEventListener('DOMContentLoaded', async () => {
+  // Si hay token guardado en el navegador, lo cargamos al CONFIG
+  const tokenGuardado = localStorage.getItem('github_token');
+  if (tokenGuardado) {
+    CONFIG.githubToken = tokenGuardado;
+  } else {
+    // Primera vez — mostrar campo de token
+    document.getElementById('campoToken').style.display = 'block';
+  }
+
   const sesion = localStorage.getItem('admin_session');
-  if (sesion === 'activa') {
+  if (sesion === 'activa' && tokenGuardado) {
     await cargarDatosParaLogin();
     entrarAlPanel();
   }

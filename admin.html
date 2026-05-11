@@ -939,16 +939,51 @@ async function login() {
 }
 
 function entrarAlPanel() {
+  const esPrimeraVez = !localStorage.getItem('password_cambiada');
   localStorage.setItem('admin_session', 'activa');
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('adminPanel').style.display = 'block';
+
+  // Ocultar botón de token — solo el desarrollador lo necesita via consola
+  const btnToken = document.querySelector('[onclick="olvidarToken()"]');
+  if (btnToken) btnToken.style.display = 'none';
 
   // Si entró como master, mostrar indicador
   if (esMaster) {
     document.querySelector('.topbar-title').textContent = '⚡ Acceso maestro';
   }
 
+  // Sugerir cambio de contraseña la primera vez
+  if (esPrimeraVez && !esMaster) {
+    setTimeout(() => {
+      mostrarToast('👋 Bienvenido. Te recomendamos cambiar tu contraseña.', 'loading');
+      setTimeout(() => mostrarBannerContrasena(), 1500);
+    }, 1000);
+  }
+
   cargarDatos();
+}
+
+function mostrarBannerContrasena() {
+  const banner = document.createElement('div');
+  banner.id = 'bannerPass';
+  banner.style.cssText = `
+    position:fixed; top:64px; left:50%; transform:translateX(-50%);
+    background:var(--accent); color:#000; border-radius:10px;
+    padding:14px 20px; font-size:13px; font-weight:600;
+    display:flex; align-items:center; gap:12px; z-index:200;
+    box-shadow: 0 4px 20px rgba(255,245,0,0.3);
+  `;
+  banner.innerHTML = `
+    <span>🔑 Recuerda cambiar tu contraseña por una personal</span>
+    <button onclick="mostrarCambiarPassword(); document.getElementById('bannerPass').remove(); localStorage.setItem('password_cambiada','si')"
+      style="background:#000;color:var(--accent);border:none;border-radius:6px;padding:6px 12px;font-weight:600;cursor:pointer;font-size:12px;">
+      Cambiar ahora
+    </button>
+    <button onclick="this.parentElement.remove(); localStorage.setItem('password_cambiada','si')"
+      style="background:none;border:none;color:#000;cursor:pointer;font-size:16px;opacity:0.6;">✕</button>
+  `;
+  document.body.appendChild(banner);
 }
 
 function logout() {
@@ -970,18 +1005,20 @@ window.addEventListener('DOMContentLoaded', async () => {
   const tokenGuardado = localStorage.getItem('github_token');
 
   if (tokenGuardado) {
-    // Token ya guardado — ocultar campo de token
     CONFIG.githubToken = tokenGuardado;
     document.getElementById('campoToken').style.display = 'none';
   } else {
-    // Primera vez — mostrar campo de token
     document.getElementById('campoToken').style.display = 'block';
   }
 
   const sesion = localStorage.getItem('admin_session');
   if (sesion === 'activa' && tokenGuardado) {
-    await cargarDatosParaLogin();
-    entrarAlPanel();
+    // Token ya en CONFIG — entrar directo sin verificar contraseña de nuevo
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('adminPanel').style.display = 'block';
+    const btnToken = document.querySelector('[onclick="olvidarToken()"]');
+    if (btnToken) btnToken.style.display = 'none';
+    cargarDatos();
   }
 });
 

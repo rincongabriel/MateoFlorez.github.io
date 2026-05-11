@@ -690,9 +690,17 @@
       <input type="password" id="inputPassword" placeholder="••••••••" onkeydown="if(event.key==='Enter') login()" />
     </div>
 
+    <div class="field" id="campoToken">
+      <label>GitHub Token</label>
+      <input type="password" id="inputToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx" />
+      <p class="field-hint">Solo se pide la primera vez en este navegador. Nunca se guarda en el código.</p>
+    </div>
 
     <button class="btn-primary" onclick="login()">Entrar al panel</button>
-    <p class="login-error" id="loginError">Contraseña incorrecta. Intenta de nuevo.</p>
+    <p style="text-align:center;margin-top:12px;">
+      <a href="#" onclick="resetearToken()" style="font-size:11px;color:var(--text-muted);text-decoration:none;">¿Problemas para entrar? Reiniciar token</a>
+    </p>
+    <p class="login-error" id="loginError"></p>
   </div>
 </div>
 
@@ -959,10 +967,12 @@ function olvidarToken() {
 
 // Auto-login por sesión activa en el mismo navegador
 window.addEventListener('DOMContentLoaded', async () => {
-  // Si hay token guardado en el navegador, lo cargamos al CONFIG
   const tokenGuardado = localStorage.getItem('github_token');
+
   if (tokenGuardado) {
+    // Token ya guardado — ocultar campo de token
     CONFIG.githubToken = tokenGuardado;
+    document.getElementById('campoToken').style.display = 'none';
   } else {
     // Primera vez — mostrar campo de token
     document.getElementById('campoToken').style.display = 'block';
@@ -974,6 +984,15 @@ window.addEventListener('DOMContentLoaded', async () => {
     entrarAlPanel();
   }
 });
+
+function resetearToken() {
+  localStorage.removeItem('github_token');
+  localStorage.removeItem('admin_session');
+  CONFIG.githubToken = '';
+  document.getElementById('campoToken').style.display = 'block';
+  document.getElementById('inputToken').value = '';
+  document.getElementById('loginError').style.display = 'none';
+}
 
 // ============================================================
 // CAMBIAR CONTRASEÑA — disponible desde el panel

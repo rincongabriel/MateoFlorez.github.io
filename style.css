@@ -23,7 +23,7 @@
     background: var(--bg);
     color: var(--white);
     font-family: var(--ff-ui);
-    font-size: 16px;
+    font-size: 18px;
     line-height: 1.6;
     overflow-x: hidden;
     cursor: none;
@@ -166,6 +166,8 @@
   .nav-links { display: none; }
   .hamburger { display: flex; }
   .hero-title { font-size: 4rem; }
+  
+
 }
 
 /* ============================================================
@@ -232,7 +234,7 @@
     font-size: 0.7rem;
     letter-spacing: 0.2em;
     text-transform: uppercase;
-    margin-top: 95px;
+    margin-top: 5.5rem;
     color: var(--accent);
     margin-bottom: 1.5rem;
     display: flex;
@@ -824,17 +826,35 @@
     transition: opacity .4s ease;
     z-index: 2;
   }
-  .portfolio-item:hover .vimeo-cover { opacity: 0; pointer-events: none; }
-  .vimeo-play-icon {
-    width: 52px; height: 52px;
-    border-radius: 50%;
-    border: 1px solid rgba(255,245,0,0.5);
-    display: flex; align-items: center; justify-content: center;
-    color: var(--accent);
-    font-size: 1.2rem;
-    transition: all .3s;
-    padding-left: 4px; /* optical centering of play */
-  }
+ .vimeo-cover {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.vimeo-cover.hidden {opacity: 0;pointer-events: none;}
+ .vimeo-play-icon {
+  width: 52px; height: 52px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,245,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--accent);
+  font-size: 1.2rem;
+  padding-left: 4px;
+  transition: all 0.3s ease;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(255, 245, 0, 0.3); }
+  70%  { box-shadow: 0 0 0 14px rgba(255, 245, 0, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 245, 0, 0); }
+}
+
+.vimeo-cover:hover .vimeo-play-icon {
+  background: rgba(255, 245, 0, 0.1);
+  border-color: var(--accent);
+  transform: scale(1.1);
+}
   .portfolio-item:hover .vimeo-play-icon {
     background: rgba(255,245,0,0.1);
     border-color: var(--accent);
@@ -1119,7 +1139,7 @@
 
   .contact-tagline {
     font-family: var(--ff-display);
-    font-size: clamp(1.4rem, 2.5vw, 2.2rem);
+    font-size: clamp( 1.5rem, 2.5vw, 2.2rem);
     font-weight: 300;
     line-height: 1.4;
     color: var(--muted);
@@ -1207,7 +1227,23 @@
   }
   .form-msg.success { border: 1px solid rgba(76,201,96,0.3); color: #4cc960; display: block; }
   .form-msg.error { border: 1px solid rgba(201,76,76,0.3); color: #c94c4c; display: block; }
+.btn-contact-link {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem;
+  border: 1px solid rgba(255,255,255,0.15);
+  color: var(--white);
+  text-decoration: none;
+  font-size: 1.1rem;
+  margin-bottom: 1rem;
+  transition: border-color 0.3s, color 0.3s;
+}
 
+.btn-contact-link:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
   /* ============================================================
      FOOTER
   ============================================================ */

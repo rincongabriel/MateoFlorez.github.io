@@ -1309,10 +1309,11 @@
 
     /* Ajuste específico para el Hero en móvil */
     #hero {
-        padding: 5rem 6% 4rem 6% !important; 
+        padding: 7rem 6% 4rem 6% !important; 
         text-align: left;
         background-position: 53% center;
-        min-height: 100svh;
+        min-height: 100dvh;
+        box-sizing: border-box;
     }
 
     .hero-tagline {

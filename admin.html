@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Panel — Mateo Flórez</title>
+  <style>
+    /* =============================================
+       VARIABLES Y RESET
+    ============================================= */
+    :root {
+      --bg: #0d0d0d;
+      --surface: #161616;
+      --surface2: #1e1e1e;
+      --border: #2a2a2a;
+      --accent: #fff500;
+      --accent-dim: rgba(255, 245, 0, 0.12);
+      --text: #f0f0f0;
+      --text-muted: #666;
+      --text-dim: #999;
+      --danger: #ff4444;
+      --danger-dim: rgba(255, 68, 68, 0.12);
+      --success: #44ff88;
+      --success-dim: rgba(68, 255, 136, 0.12);
+      --radius: 10px;
+      --font: 'DM Sans', sans-serif;
+      --mono: 'DM Mono', monospace;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 14px;
+      min-height: 100vh;
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap');
+
+    /* =============================================
+       PANTALLA DE LOGIN
+    ============================================= */
+    #loginScreen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px;
+    }
+
+    .login-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 48px 40px;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .login-logo {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 32px;
+    }
+
+    .login-title {
+      font-size: 24px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .login-sub {
+      color: var(--text-muted);
+      margin-bottom: 36px;
+      line-height: 1.5;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    .field label {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+
+    .field input {
+      width: 100%;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 12px 14px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .field input:focus {
+      border-color: var(--accent);
+    }
+
+    .field-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 6px;
+      line-height: 1.5;
+    }
+
+    .btn-primary {
+      width: 100%;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: var(--radius);
+      padding: 14px;
+      font-family: var(--font);
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: opacity 0.2s;
+    }
+
+    .btn-primary:hover { opacity: 0.85; }
+
+    .login-error {
+      color: var(--danger);
+      font-size: 12px;
+      margin-top: 12px;
+      display: none;
+    }
+
+    /* =============================================
+       PANEL PRINCIPAL
+    ============================================= */
+    #adminPanel { display: none; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(13, 13, 13, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 32px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .topbar-logo {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .topbar-sep {
+      width: 1px;
+      height: 16px;
+      background: var(--border);
+    }
+
+    .topbar-title {
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-save {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 20px;
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-save:hover { opacity: 0.85; }
+    .btn-save:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .btn-logout {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 8px 14px;
+      color: var(--text-muted);
+      font-family: var(--font);
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-logout:hover {
+      border-color: var(--danger);
+      color: var(--danger);
+    }
+
+    /* =============================================
+       LAYOUT DEL PANEL
+    ============================================= */
+    .panel-layout {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      min-height: calc(100vh - 56px);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      border-right: 1px solid var(--border);
+      padding: 24px 16px;
+      position: sticky;
+      top: 56px;
+      height: calc(100vh - 56px);
+      overflow-y: auto;
+    }
+
+    .sidebar-section {
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 0 12px;
+      margin-bottom: 8px;
+      margin-top: 24px;
+    }
+
+    .sidebar-section:first-child { margin-top: 0; }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      color: var(--text-dim);
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.15s;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+    }
+
+    .nav-item:hover {
+      background: var(--surface2);
+      color: var(--text);
+    }
+
+    .nav-item.active {
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+
+    .nav-icon { font-size: 15px; }
+
+    .nav-badge {
+      margin-left: auto;
+      background: var(--surface2);
+      border-radius: 20px;
+      padding: 2px 8px;
+      font-size: 11px;
+      font-family: var(--mono);
+      color: var(--text-muted);
+    }
+
+    .nav-item.active .nav-badge {
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+
+    /* Content area */
+    .content {
+      padding: 32px;
+      max-width: 860px;
+    }
+
+    /* =============================================
+       SECCIONES
+    ============================================= */
+    .section { display: none; }
+    .section.active { display: block; }
+
+    .section-header {
+      margin-bottom: 28px;
+    }
+
+    .section-title {
+      font-size: 22px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* =============================================
+       CARDS DE ITEMS
+    ============================================= */
+    .items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .item-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: border-color 0.2s;
+    }
+
+    .item-card:hover { border-color: #3a3a3a; }
+
+    .item-card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .item-card-title {
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .item-card-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 3px;
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .btn-edit, .btn-delete {
+      border: none;
+      border-radius: 6px;
+      padding: 6px 12px;
+      font-family: var(--font);
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .btn-edit {
+      background: var(--surface2);
+      color: var(--text-dim);
+    }
+
+    .btn-edit:hover {
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+
+    .btn-delete {
+      background: var(--surface2);
+      color: var(--text-muted);
+    }
+
+    .btn-delete:hover {
+      background: var(--danger-dim);
+      color: var(--danger);
+    }
+
+    /* Formulario inline de edición */
+    .item-form {
+      display: none;
+      flex-direction: column;
+      gap: 12px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .item-form.open { display: flex; }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .form-field {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .form-field label {
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .form-field input,
+    .form-field textarea {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: var(--text);
+      font-family: var(--font);
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+      resize: vertical;
+    }
+
+    .form-field input:focus,
+    .form-field textarea:focus {
+      border-color: var(--accent);
+    }
+
+    .form-field textarea { min-height: 80px; }
+
+    .form-field.full { grid-column: 1 / -1; }
+
+    .form-actions {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+
+    .btn-confirm {
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .btn-cancel {
+      background: var(--surface2);
+      color: var(--text-dim);
+      border: none;
+      border-radius: 8px;
+      padding: 8px 16px;
+      font-family: var(--font);
+      font-size: 13px;
+      cursor: pointer;
+    }
+
+    /* Botón agregar nuevo */
+    .btn-add {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: none;
+      border: 1px dashed var(--border);
+      border-radius: var(--radius);
+      padding: 14px 20px;
+      color: var(--text-muted);
+      font-family: var(--font);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      width: 100%;
+      transition: all 0.2s;
+    }
+
+    .btn-add:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+      background: var(--accent-dim);
+    }
+
+    /* =============================================
+       SECCIÓN REDES SOCIALES
+    ============================================= */
+    .redes-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .red-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .red-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: var(--surface2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+    .red-label {
+      font-size: 13px;
+      font-weight: 600;
+      min-width: 100px;
+    }
+
+    .red-input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 12px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .red-input:focus { border-color: var(--accent); }
+
+    .red-status {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--border);
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+
+    .red-status.active { background: var(--success); }
+
+    /* =============================================
+       TOAST DE NOTIFICACIONES
+    ============================================= */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 14px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 1000;
+      transform: translateY(80px);
+      opacity: 0;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      max-width: 320px;
+    }
+
+    .toast.show {
+      transform: translateY(0);
+      opacity: 1;
+    }
+
+    .toast.success { border-color: var(--success); color: var(--success); }
+    .toast.error { border-color: var(--danger); color: var(--danger); }
+    .toast.loading { border-color: var(--accent); color: var(--accent); }
+
+    /* =============================================
+       ESTADO VACÍO
+    ============================================= */
+    .empty-state {
+      text-align: center;
+      padding: 48px 24px;
+      color: var(--text-muted);
+    }
+
+    .empty-icon { font-size: 32px; margin-bottom: 12px; }
+    .empty-text { font-size: 14px; }
+
+    /* =============================================
+       TAGS INPUT
+    ============================================= */
+    .tags-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Destacado toggle */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: var(--text-dim);
+    }
+
+    .toggle {
+      appearance: none;
+      width: 36px;
+      height: 20px;
+      background: var(--surface2);
+      border-radius: 20px;
+      cursor: pointer;
+      position: relative;
+      transition: background 0.2s;
+      border: 1px solid var(--border);
+    }
+
+    .toggle::after {
+      content: '';
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      background: var(--text-muted);
+      border-radius: 50%;
+      top: 2px;
+      left: 2px;
+      transition: all 0.2s;
+    }
+
+    .toggle:checked {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+    }
+
+    .toggle:checked::after {
+      left: 18px;
+      background: var(--accent);
+    }
+  </style>
+</head>
+<body>
+
+<!-- =============================================
+     PANTALLA DE LOGIN
+============================================= -->
+<div id="loginScreen">
+  <div class="login-box">
+    <div class="login-logo">Mateo Flórez · Studio</div>
+    <h1 class="login-title">Panel de administración</h1>
+    <p class="login-sub">Ingresa tu contraseña para acceder.</p>
+
+    <div class="field">
+      <label>Contraseña</label>
+      <input type="password" id="inputPassword" placeholder="••••••••" onkeydown="if(event.key==='Enter') login()" />
+    </div>
+
+
+    <button class="btn-primary" onclick="login()">Entrar al panel</button>
+    <p class="login-error" id="loginError">Contraseña incorrecta. Intenta de nuevo.</p>
+  </div>
+</div>
+
+<!-- =============================================
+     PANEL PRINCIPAL
+============================================= -->
+<div id="adminPanel">
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-logo">MF · Admin</span>
+      <div class="topbar-sep"></div>
+      <span class="topbar-title">Panel de edición</span>
+    </div>
+    <div class="topbar-right">
+      <button class="btn-save" id="btnSave" onclick="guardarCambios()">
+        <span>💾</span> Publicar cambios
+      </button>
+      <button class="btn-logout" onclick="mostrarCambiarPassword()" style="border-color:var(--border);">🔑 Contraseña</button>
+      <button class="btn-logout" onclick="logout()">Salir</button>
+    </div>
+  </div>
+
+  <!-- Layout -->
+  <div class="panel-layout">
+
+    <!-- Sidebar -->
+    <nav class="sidebar">
+      <div class="sidebar-section">Contenido</div>
+      <button class="nav-item active" onclick="cambiarSeccion('videos', this)">
+        <span class="nav-icon">🎬</span>
+        Videos
+        <span class="nav-badge" id="badge-videos">0</span>
+      </button>
+      <button class="nav-item" onclick="cambiarSeccion('experiencia', this)">
+        <span class="nav-icon">🏢</span>
+        Experiencia
+        <span class="nav-badge" id="badge-experiencia">0</span>
+      </button>
+      <button class="nav-item" onclick="cambiarSeccion('testimonios', this)">
+        <span class="nav-icon">💬</span>
+        Testimonios
+        <span class="nav-badge" id="badge-testimonios">0</span>
+      </button>
+
+      <div class="sidebar-section">Contacto</div>
+      <button class="nav-item" onclick="cambiarSeccion('redes', this)">
+        <span class="nav-icon">🔗</span>
+        Redes sociales
+      </button>
+    </nav>
+
+    <!-- Contenido -->
+    <main class="content">
+
+      <!-- ==================== VIDEOS ==================== -->
+      <div class="section active" id="sec-videos">
+        <div class="section-header">
+          <h2 class="section-title">Videos del portafolio</h2>
+          <p class="section-desc">Agrega o edita los proyectos que aparecen en tu portafolio. Necesitas el ID del video en Vimeo (los números al final de la URL).</p>
+        </div>
+
+        <div class="items-list" id="list-videos"></div>
+
+        <button class="btn-add" onclick="agregarVideo()">
+          <span>＋</span> Agregar video
+        </button>
+      </div>
+
+      <!-- ==================== EXPERIENCIA ==================== -->
+      <div class="section" id="sec-experiencia">
+        <div class="section-header">
+          <h2 class="section-title">Trayectoria</h2>
+          <p class="section-desc">Agrega, edita o elimina las empresas y proyectos con los que has trabajado.</p>
+        </div>
+
+        <div class="items-list" id="list-experiencia"></div>
+
+        <button class="btn-add" onclick="agregarExperiencia()">
+          <span>＋</span> Agregar empresa
+        </button>
+      </div>
+
+      <!-- ==================== TESTIMONIOS ==================== -->
+      <div class="section" id="sec-testimonios">
+        <div class="section-header">
+          <h2 class="section-title">Testimonios</h2>
+          <p class="section-desc">Lo que dicen tus clientes y colaboradores sobre tu trabajo.</p>
+        </div>
+
+        <div class="items-list" id="list-testimonios"></div>
+
+        <button class="btn-add" onclick="agregarTestimonio()">
+          <span>＋</span> Agregar testimonio
+        </button>
+      </div>
+
+      <!-- ==================== REDES ==================== -->
+      <div class="section" id="sec-redes">
+        <div class="section-header">
+          <h2 class="section-title">Redes sociales</h2>
+          <p class="section-desc">Pega la URL completa de cada red. Las que estén vacías no aparecerán en tu portafolio.</p>
+        </div>
+
+        <div class="redes-grid">
+          <div class="red-item">
+            <div class="red-icon">📱</div>
+            <span class="red-label">WhatsApp</span>
+            <input class="red-input" id="red-whatsapp" type="text" placeholder="https://wa.me/57..." oninput="actualizarEstadoRed(this)" />
+            <div class="red-status" id="status-whatsapp"></div>
+          </div>
+          <div class="red-item">
+            <div class="red-icon">✉️</div>
+            <span class="red-label">Email</span>
+            <input class="red-input" id="red-email" type="text" placeholder="tucorreo@gmail.com" oninput="actualizarEstadoRed(this)" />
+            <div class="red-status" id="status-email"></div>
+          </div>
+          <div class="red-item">
+            <div class="red-icon">📸</div>
+            <span class="red-label">Instagram</span>
+            <input class="red-input" id="red-instagram" type="text" placeholder="https://instagram.com/..." oninput="actualizarEstadoRed(this)" />
+            <div class="red-status" id="status-instagram"></div>
+          </div>
+          <div class="red-item">
+            <div class="red-icon">▶️</div>
+            <span class="red-label">YouTube</span>
+            <input class="red-input" id="red-youtube" type="text" placeholder="https://youtube.com/..." oninput="actualizarEstadoRed(this)" />
+            <div class="red-status" id="status-youtube"></div>
+          </div>
+          <div class="red-item">
+            <div class="red-icon">💼</div>
+            <span class="red-label">LinkedIn</span>
+            <input class="red-input" id="red-linkedin" type="text" placeholder="https://linkedin.com/in/..." oninput="actualizarEstadoRed(this)" />
+            <div class="red-status" id="status-linkedin"></div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- Toast de notificaciones -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// CONFIGURACIÓN
+// ============================================================
+const CONFIG = {
+  repoOwner: 'rincongabrielgit ',     // Tu usuario de GitHub
+  repoName:'MateoFlores.github.io',   // El nombre exacto de tu repositorio
+  dataPath: 'data.json',          // Ruta del archivo dentro del repo
+  // Token de GitHub — solo tú lo ves en el código
+  githubToken: 'PEGA_TU_GITHUB_TOKEN_AQUI',
+  // Contraseña maestra de emergencia — solo tú la sabes
+  // Está hasheada: nunca aparece en texto plano
+  masterHash: '324adeed26b9112913942a024e9e8df528a057eb5e8313fde74b4978fafaa342'
+};
+// ============================================================
+
+// Contraseña inicial de Mateo — se reemplaza cuando él la cambia
+// Esta es la contraseña genérica: forMoove
+const PASS_INICIAL_HASH = 'b57295c27e1f1670f7f40a0a246fb0607b1a6e88b7e0c5e331b81a6c1fed3d0d';
+
+// Estado en memoria
+let datos = { videos: [], experiencia: [], testimonios: [], redes: {}, _config: {} };
+let esMaster = false; // true si entró con la llave maestra
+
+// ============================================================
+// HASH — convierte una contraseña en un código irreversible
+// Usamos SHA-256, el estándar de la industria.
+// "irreversible" significa que del hash no puedes sacar
+// la contraseña original — solo puedes comparar hashes.
+// ============================================================
+async function hashear(texto) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(texto);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// ============================================================
+// LOGIN
+// ============================================================
+async function login() {
+  const pass = document.getElementById('inputPassword').value;
+  const error = document.getElementById('loginError');
+  error.style.display = 'none';
+
+  if (!pass) {
+    error.textContent = 'Escribe tu contraseña.';
+    error.style.display = 'block';
+    return;
+  }
+
+  const hash = await hashear(pass);
+
+  // ¿Es la contraseña maestra?
+  if (hash === CONFIG.masterHash) {
+    esMaster = true;
+    entrarAlPanel();
+    return;
+  }
+
+  // ¿Es la contraseña de Mateo?
+  // Primero cargamos el data.json para ver si ya cambió su contraseña
+  mostrarToast('Verificando...', 'loading');
+  await cargarDatosParaLogin();
+
+  const hashGuardado = datos._config?.passwordHash || PASS_INICIAL_HASH;
+
+  if (hash === hashGuardado) {
+    esMaster = false;
+    entrarAlPanel();
+  } else {
+    mostrarToast('', '');
+    error.textContent = 'Contraseña incorrecta.';
+    error.style.display = 'block';
+  }
+}
+
+function entrarAlPanel() {
+  localStorage.setItem('admin_session', 'activa');
+  document.getElementById('loginScreen').style.display = 'none';
+  document.getElementById('adminPanel').style.display = 'block';
+
+  // Si entró como master, mostrar indicador
+  if (esMaster) {
+    document.querySelector('.topbar-title').textContent = '⚡ Acceso maestro';
+  }
+
+  cargarDatos();
+}
+
+function logout() {
+  localStorage.removeItem('admin_session');
+  location.reload();
+}
+
+// Auto-login por sesión activa en el mismo navegador
+window.addEventListener('DOMContentLoaded', async () => {
+  const sesion = localStorage.getItem('admin_session');
+  if (sesion === 'activa') {
+    await cargarDatosParaLogin();
+    entrarAlPanel();
+  }
+});
+
+// ============================================================
+// CAMBIAR CONTRASEÑA — disponible desde el panel
+// ============================================================
+function mostrarCambiarPassword() {
+  const html = `
+    <div style="position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;display:flex;align-items:center;justify-content:center;" id="modalPass">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:36px;width:100%;max-width:400px;">
+        <h3 style="font-size:18px;font-weight:600;margin-bottom:8px;">Cambiar contraseña</h3>
+        <p style="color:var(--text-muted);font-size:13px;margin-bottom:24px;">La nueva contraseña se guarda de forma segura en el repositorio.</p>
+        <div class="field" style="margin-bottom:14px;">
+          <label style="display:block;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;">Nueva contraseña</label>
+          <input type="password" id="newPass1" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;color:var(--text);font-size:13px;outline:none;" placeholder="Mínimo 8 caracteres" />
+        </div>
+        <div class="field" style="margin-bottom:24px;">
+          <label style="display:block;font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;">Confirmar contraseña</label>
+          <input type="password" id="newPass2" style="width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:12px;color:var(--text);font-size:13px;outline:none;" placeholder="Repite la contraseña" />
+        </div>
+        <div style="display:flex;gap:10px;justify-content:flex-end;">
+          <button onclick="document.getElementById('modalPass').remove()" style="background:var(--surface2);color:var(--text-dim);border:none;border-radius:8px;padding:10px 16px;font-family:var(--font);font-size:13px;cursor:pointer;">Cancelar</button>
+          <button onclick="confirmarCambioPassword()" style="background:var(--accent);color:#000;border:none;border-radius:8px;padding:10px 16px;font-family:var(--font);font-size:13px;font-weight:600;cursor:pointer;">Guardar contraseña</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.body.insertAdjacentHTML('beforeend', html);
+}
+
+async function confirmarCambioPassword() {
+  const p1 = document.getElementById('newPass1').value;
+  const p2 = document.getElementById('newPass2').value;
+
+  if (p1.length < 8) {
+    mostrarToast('La contraseña debe tener al menos 8 caracteres', 'error');
+    return;
+  }
+
+  if (p1 !== p2) {
+    mostrarToast('Las contraseñas no coinciden', 'error');
+    return;
+  }
+
+  const nuevoHash = await hashear(p1);
+  datos._config = datos._config || {};
+  datos._config.passwordHash = nuevoHash;
+
+  document.getElementById('modalPass').remove();
+  await guardarCambios();
+  mostrarToast('✓ Contraseña actualizada correctamente', 'success');
+}
+
+// ============================================================
+// CARGAR DATOS DESDE GITHUB
+// ============================================================
+async function fetchDatosGitHub() {
+  const url = `https://api.github.com/repos/${CONFIG.repoOwner}/${CONFIG.repoName}/contents/${CONFIG.dataPath}`;
+  const res = await fetch(url, {
+    headers: {
+      'Authorization': `Bearer ${CONFIG.githubToken}`,
+      'Accept': 'application/vnd.github.v3+json'
+    }
+  });
+  if (!res.ok) throw new Error('No se pudo cargar el archivo');
+  const archivo = await res.json();
+  const contenido = atob(archivo.content.replace(/\n/g, ''));
+  return JSON.parse(contenido);
+}
+
+// Carga silenciosa para verificar contraseña en el login
+async function cargarDatosParaLogin() {
+  try {
+    datos = await fetchDatosGitHub();
+  } catch (e) {
+    datos = { videos: [], experiencia: [], testimonios: [], redes: {}, _config: {} };
+  }
+}
+
+async function cargarDatos() {
+  mostrarToast('Cargando datos...', 'loading');
+  try {
+    datos = await fetchDatosGitHub();
+    renderizarTodo();
+    mostrarToast('Datos cargados', 'success');
+  } catch (e) {
+    mostrarToast('Error al cargar. Verifica la configuración del panel.', 'error');
+  }
+}
+
+// ============================================================
+// RENDERIZAR TODAS LAS SECCIONES
+// ============================================================
+function renderizarTodo() {
+  renderizarVideos();
+  renderizarExperiencia();
+  renderizarTestimonios();
+  renderizarRedes();
+  actualizarBadges();
+}
+
+// ============================================================
+// VIDEOS
+// ============================================================
+function renderizarVideos() {
+  const lista = document.getElementById('list-videos');
+
+  if (!datos.videos.length) {
+    lista.innerHTML = '<div class="empty-state"><div class="empty-icon">🎬</div><div class="empty-text">Aún no hay videos. Agrega el primero.</div></div>';
+    return;
+  }
+
+  lista.innerHTML = datos.videos.map((v, i) => `
+    <div class="item-card" id="card-video-${i}">
+      <div class="item-card-header">
+        <div>
+          <div class="item-card-title">${v.titulo || 'Sin título'}</div>
+          <div class="item-card-sub">ID: ${v.id} · ${v.categoria} ${v.destacado ? '· ⭐ Destacado' : ''}</div>
+        </div>
+        <div class="item-actions">
+          <button class="btn-edit" onclick="toggleFormVideo(${i})">Editar</button>
+          <button class="btn-delete" onclick="eliminarVideo(${i})">Eliminar</button>
+        </div>
+      </div>
+      <div class="item-form" id="form-video-${i}">
+        <div class="form-row">
+          <div class="form-field">
+            <label>ID de Vimeo</label>
+            <input type="text" value="${v.id}" onchange="datos.videos[${i}].id = this.value" placeholder="1190672192" />
+          </div>
+          <div class="form-field">
+            <label>Categoría</label>
+            <input type="text" value="${v.categoria}" onchange="datos.videos[${i}].categoria = this.value" placeholder="Reel · 2025" />
+          </div>
+        </div>
+        <div class="form-field full">
+          <label>Título</label>
+          <input type="text" value="${v.titulo}" onchange="datos.videos[${i}].titulo = this.value; actualizarTituloCard('video', ${i}, this.value)" placeholder="Demo — Trabajos Audiovisuales" />
+        </div>
+        <div class="form-field full">
+          <label>URL de la imagen de portada (Cover)</label>
+          <input type="text" value="${v.coverUrl || ''}" onchange="datos.videos[${i}].coverUrl = this.value" placeholder="https://i.vimeocdn.com/..." />
+        </div>
+        <div class="toggle-row">
+          <input type="checkbox" class="toggle" ${v.destacado ? 'checked' : ''} onchange="datos.videos[${i}].destacado = this.checked" />
+          Video destacado (aparece más grande en la grilla)
+        </div>
+        <div class="form-actions">
+          <button class="btn-cancel" onclick="toggleFormVideo(${i})">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleFormVideo(i) {
+  document.getElementById(`form-video-${i}`).classList.toggle('open');
+}
+
+function agregarVideo() {
+  datos.videos.push({
+    id: '',
+    titulo: 'Nuevo video',
+    categoria: '',
+    coverUrl: '',
+    destacado: false
+  });
+  renderizarVideos();
+  actualizarBadges();
+  // Abrir el form del nuevo directamente
+  setTimeout(() => toggleFormVideo(datos.videos.length - 1), 50);
+}
+
+function eliminarVideo(i) {
+  if (!confirm(`¿Eliminar "${datos.videos[i].titulo}"?`)) return;
+  datos.videos.splice(i, 1);
+  renderizarVideos();
+  actualizarBadges();
+}
+
+// ============================================================
+// EXPERIENCIA
+// ============================================================
+function renderizarExperiencia() {
+  const lista = document.getElementById('list-experiencia');
+
+  if (!datos.experiencia.length) {
+    lista.innerHTML = '<div class="empty-state"><div class="empty-icon">🏢</div><div class="empty-text">Aún no hay empresas. Agrega la primera.</div></div>';
+    return;
+  }
+
+  lista.innerHTML = datos.experiencia.map((e, i) => `
+    <div class="item-card" id="card-exp-${i}">
+      <div class="item-card-header">
+        <div>
+          <div class="item-card-title">${e.empresa || 'Sin nombre'}</div>
+          <div class="item-card-sub">${e.fechas} · ${e.cargo}</div>
+        </div>
+        <div class="item-actions">
+          <button class="btn-edit" onclick="toggleFormExp(${i})">Editar</button>
+          <button class="btn-delete" onclick="eliminarExp(${i})">Eliminar</button>
+        </div>
+      </div>
+      <div class="item-form" id="form-exp-${i}">
+        <div class="form-row">
+          <div class="form-field">
+            <label>Empresa</label>
+            <input type="text" value="${e.empresa}" onchange="datos.experiencia[${i}].empresa = this.value; actualizarTituloCard('exp', ${i}, this.value)" placeholder="Nombre de la empresa" />
+          </div>
+          <div class="form-field">
+            <label>Fechas</label>
+            <input type="text" value="${e.fechas}" onchange="datos.experiencia[${i}].fechas = this.value" placeholder="2023 — 2024" />
+          </div>
+        </div>
+        <div class="form-field full">
+          <label>Cargo / Rol</label>
+          <input type="text" value="${e.cargo}" onchange="datos.experiencia[${i}].cargo = this.value" placeholder="Director Creativo · Redes & Marketing" />
+        </div>
+        <div class="form-field full">
+          <label>Descripción</label>
+          <textarea onchange="datos.experiencia[${i}].descripcion = this.value" placeholder="Describe tu trabajo aquí...">${e.descripcion}</textarea>
+        </div>
+        <div class="form-field full">
+          <label>Tags (separados por coma)</label>
+          <input type="text" value="${(e.tags || []).join(', ')}" onchange="datos.experiencia[${i}].tags = this.value.split(',').map(t => t.trim()).filter(Boolean)" placeholder="Filmmaking, Dirección Creativa, Redes Sociales" />
+          <span class="tags-hint">Escribe las etiquetas separadas por coma</span>
+        </div>
+        <div class="form-actions">
+          <button class="btn-cancel" onclick="toggleFormExp(${i})">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleFormExp(i) {
+  document.getElementById(`form-exp-${i}`).classList.toggle('open');
+}
+
+function agregarExperiencia() {
+  datos.experiencia.push({
+    empresa: 'Nueva empresa',
+    fechas: '2024 — Presente',
+    cargo: '',
+    descripcion: '',
+    tags: []
+  });
+  renderizarExperiencia();
+  actualizarBadges();
+  setTimeout(() => toggleFormExp(datos.experiencia.length - 1), 50);
+}
+
+function eliminarExp(i) {
+  if (!confirm(`¿Eliminar "${datos.experiencia[i].empresa}"?`)) return;
+  datos.experiencia.splice(i, 1);
+  renderizarExperiencia();
+  actualizarBadges();
+}
+
+// ============================================================
+// TESTIMONIOS
+// ============================================================
+function renderizarTestimonios() {
+  const lista = document.getElementById('list-testimonios');
+
+  if (!datos.testimonios.length) {
+    lista.innerHTML = '<div class="empty-state"><div class="empty-icon">💬</div><div class="empty-text">Aún no hay testimonios. Agrega el primero.</div></div>';
+    return;
+  }
+
+  lista.innerHTML = datos.testimonios.map((t, i) => `
+    <div class="item-card" id="card-test-${i}">
+      <div class="item-card-header">
+        <div>
+          <div class="item-card-title">${t.nombre || 'Sin nombre'}</div>
+          <div class="item-card-sub">${t.cargo}</div>
+        </div>
+        <div class="item-actions">
+          <button class="btn-edit" onclick="toggleFormTest(${i})">Editar</button>
+          <button class="btn-delete" onclick="eliminarTestimonio(${i})">Eliminar</button>
+        </div>
+      </div>
+      <div class="item-form" id="form-test-${i}">
+        <div class="form-field full">
+          <label>Testimonio</label>
+          <textarea onchange="datos.testimonios[${i}].texto = this.value" placeholder="Lo que dijo sobre tu trabajo...">${t.texto}</textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-field">
+            <label>Nombre</label>
+            <input type="text" value="${t.nombre}" onchange="datos.testimonios[${i}].nombre = this.value; actualizarTituloCard('test', ${i}, this.value)" placeholder="Carlos R." />
+          </div>
+          <div class="form-field">
+            <label>Cargo / Rol</label>
+            <input type="text" value="${t.cargo}" onchange="datos.testimonios[${i}].cargo = this.value" placeholder="Director · Empresa" />
+          </div>
+        </div>
+        <div class="form-field">
+          <label>Iniciales (para el avatar)</label>
+          <input type="text" value="${t.iniciales}" onchange="datos.testimonios[${i}].iniciales = this.value" placeholder="CR" maxlength="2" />
+        </div>
+        <div class="form-actions">
+          <button class="btn-cancel" onclick="toggleFormTest(${i})">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function toggleFormTest(i) {
+  document.getElementById(`form-test-${i}`).classList.toggle('open');
+}
+
+function agregarTestimonio() {
+  datos.testimonios.push({
+    texto: '',
+    nombre: 'Nuevo testimonio',
+    cargo: '',
+    iniciales: ''
+  });
+  renderizarTestimonios();
+  actualizarBadges();
+  setTimeout(() => toggleFormTest(datos.testimonios.length - 1), 50);
+}
+
+function eliminarTestimonio(i) {
+  if (!confirm(`¿Eliminar el testimonio de "${datos.testimonios[i].nombre}"?`)) return;
+  datos.testimonios.splice(i, 1);
+  renderizarTestimonios();
+  actualizarBadges();
+}
+
+// ============================================================
+// REDES SOCIALES
+// ============================================================
+function renderizarRedes() {
+  const redes = datos.redes || {};
+  const campos = ['whatsapp', 'email', 'instagram', 'youtube', 'linkedin'];
+  campos.forEach(red => {
+    const input = document.getElementById(`red-${red}`);
+    const status = document.getElementById(`status-${red}`);
+    if (input) {
+      input.value = redes[red] || '';
+      if (status) status.classList.toggle('active', !!redes[red]);
+    }
+  });
+}
+
+function actualizarEstadoRed(input) {
+  const key = input.id.replace('red-', '');
+  datos.redes[key] = input.value.trim();
+  const status = document.getElementById(`status-${key}`);
+  if (status) status.classList.toggle('active', !!input.value.trim());
+}
+
+// ============================================================
+// GUARDAR EN GITHUB
+// ============================================================
+// Este es el momento clave: tomamos todos los datos en memoria,
+// los convertemos a JSON, los codificamos en Base64, y le
+// decimos a GitHub "reemplaza el archivo con esto".
+// GitHub crea un commit automático con el cambio.
+// ============================================================
+async function guardarCambios() {
+  const btn = document.getElementById('btnSave');
+  btn.disabled = true;
+  mostrarToast('Publicando cambios...', 'loading');
+
+  try {
+    // Paso 1: obtener el SHA del archivo actual
+    // GitHub necesita el SHA para verificar que estás editando
+    // la versión más reciente y evitar conflictos.
+    const url = `https://api.github.com/repos/${CONFIG.repoOwner}/${CONFIG.repoName}/contents/${CONFIG.dataPath}`;
+
+    const resActual = await fetch(url, {
+      headers: {
+        'Authorization': `Bearer ${CONFIG.githubToken}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+
+    const archivoActual = await resActual.json();
+    const sha = archivoActual.sha;
+
+    // Paso 2: convertir los datos a JSON y luego a Base64
+    const contenidoJSON = JSON.stringify(datos, null, 2);
+    const contenidoBase64 = btoa(unescape(encodeURIComponent(contenidoJSON)));
+
+    // Paso 3: hacer el PUT — escribir el archivo nuevo
+    const resPut = await fetch(url, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${CONFIG.githubToken}`,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: 'Panel: actualizar contenido del portafolio',
+        content: contenidoBase64,
+        sha: sha
+      })
+    });
+
+    if (!resPut.ok) {
+      const err = await resPut.json();
+      throw new Error(err.message || 'Error al guardar');
+    }
+
+    mostrarToast('✓ Publicado. Los cambios aparecen en ~1 minuto.', 'success');
+  } catch (e) {
+    mostrarToast(`Error: ${e.message}`, 'error');
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+// ============================================================
+// UTILIDADES
+// ============================================================
+function cambiarSeccion(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById(`sec-${id}`).classList.add('active');
+  btn.classList.add('active');
+}
+
+function actualizarBadges() {
+  document.getElementById('badge-videos').textContent = datos.videos.length;
+  document.getElementById('badge-experiencia').textContent = datos.experiencia.length;
+  document.getElementById('badge-testimonios').textContent = datos.testimonios.length;
+}
+
+function actualizarTituloCard(tipo, i, valor) {
+  const prefijo = tipo === 'video' ? 'card-video' : tipo === 'exp' ? 'card-exp' : 'card-test';
+  const card = document.getElementById(`${prefijo}-${i}`);
+  if (card) card.querySelector('.item-card-title').textContent = valor || 'Sin nombre';
+}
+
+let toastTimeout;
+function mostrarToast(msg, tipo = 'success') {
+  const toast = document.getElementById('toast');
+  toast.textContent = msg;
+  toast.className = `toast ${tipo} show`;
+  clearTimeout(toastTimeout);
+  if (tipo !== 'loading') {
+    toastTimeout = setTimeout(() => toast.classList.remove('show'), 3500);
+  }
+}
+</script>
+</body>
+</html>

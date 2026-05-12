@@ -31,29 +31,6 @@ window.addEventListener('scroll', () => {
 }, { passive: true });
 
 /* ============================================================
-   PARALLAX ZOOM — Hero background
-============================================================ */
-(function() {
-  const hero = document.getElementById('hero');
-  if (!hero) return;
-
-  const BASE_SIZE = 100;
-  const MAX_ZOOM  = 130;
-
-  function onScroll() {
-    const scrollY = window.scrollY;
-    const heroH   = hero.offsetHeight;
-    if (scrollY > heroH) return;
-    const progress = scrollY / heroH;
-    const size = BASE_SIZE + (MAX_ZOOM - BASE_SIZE) * progress;
-    hero.style.backgroundSize = `${size.toFixed(2)}%`;
-  }
-
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
-})();
-
-/* ============================================================
    HAMBURGER MENÚ MÓVIL
 ============================================================ */
 const hamburger = document.getElementById('hamburger');

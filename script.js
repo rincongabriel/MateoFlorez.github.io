@@ -1,30 +1,63 @@
- const dot = document.getElementById('cursor-dot');
+/* ============================================================
+   CURSOR PERSONALIZADO
+============================================================ */
+const dot  = document.getElementById('cursor-dot');
 const ring = document.getElementById('cursor-ring');
-let ringX = 0, ringY = 0;
+let mouseX = 0, mouseY = 0;
+let ringX  = 0, ringY  = 0;
 
 document.addEventListener('mousemove', (e) => {
+  mouseX = e.clientX;
+  mouseY = e.clientY;
   dot.style.left = e.clientX + 'px';
-  dot.style.top = e.clientY + 'px';
-  ringX += (e.clientX - ringX) * 0.12;
-  ringY += (e.clientY - ringY) * 0.12;
+  dot.style.top  = e.clientY + 'px';
 });
 
 function animRing() {
+  ringX += (mouseX - ringX) * 0.12;
+  ringY += (mouseY - ringY) * 0.12;
   ring.style.left = ringX + 'px';
-  ring.style.top = ringY + 'px';
+  ring.style.top  = ringY + 'px';
   requestAnimationFrame(animRing);
 }
 animRing();
 
-// NAVBAR SCROLL
+/* ============================================================
+   NAVBAR
+============================================================ */
 const navbar = document.getElementById('navbar');
 window.addEventListener('scroll', () => {
   navbar.classList.toggle('scrolled', window.scrollY > 60);
-});
+}, { passive: true });
 
-// HAMBURGER MENÚ MÓVIL
+/* ============================================================
+   PARALLAX ZOOM — Hero background
+============================================================ */
+(function() {
+  const hero = document.getElementById('hero');
+  if (!hero) return;
+
+  const BASE_SIZE = 100;
+  const MAX_ZOOM  = 130;
+
+  function onScroll() {
+    const scrollY = window.scrollY;
+    const heroH   = hero.offsetHeight;
+    if (scrollY > heroH) return;
+    const progress = scrollY / heroH;
+    const size = BASE_SIZE + (MAX_ZOOM - BASE_SIZE) * progress;
+    hero.style.backgroundSize = `${size.toFixed(2)}%`;
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+
+/* ============================================================
+   HAMBURGER MENÚ MÓVIL
+============================================================ */
 const hamburger = document.getElementById('hamburger');
-const navLinks = document.getElementById('navLinks');
+const navLinks  = document.getElementById('navLinks');
 hamburger.addEventListener('click', () => {
   navLinks.classList.toggle('open');
 });
@@ -32,9 +65,11 @@ navLinks.querySelectorAll('a').forEach(a => {
   a.addEventListener('click', () => navLinks.classList.remove('open'));
 });
 
-// SCROLL REVEAL
+/* ============================================================
+   SCROLL REVEAL
+============================================================ */
 const revealEls = document.querySelectorAll('.reveal');
-const observer = new IntersectionObserver((entries) => {
+const observer  = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
       entry.target.classList.add('visible');
@@ -44,19 +79,11 @@ const observer = new IntersectionObserver((entries) => {
 }, { threshold: 0.12 });
 revealEls.forEach(el => observer.observe(el));
 
-
-
-// ============================================================
-// CARGA DE DATOS DESDE data.json
-// ============================================================
-// fetch() le pide al navegador que vaya a buscar el archivo.
-// .then() significa "cuando lo tengas, haz esto".
-// Son dos pasos: primero convierte la respuesta a JSON,
-// luego usa los datos para construir cada sección.
-// ============================================================
-
+/* ============================================================
+   CARGA DE DATOS DESDE data.json
+============================================================ */
 fetch('data.json')
-  .then(respuesta => respuesta.json())
+  .then(r => r.json())
   .then(datos => {
     construirPortafolio(datos.videos);
     construirExperiencia(datos.experiencia);
@@ -64,19 +91,8 @@ fetch('data.json')
     construirRedes(datos.redes);
   });
 
-
-// ------------------------------------------------------------
-// PORTAFOLIO — construye las tarjetas de video
-// ------------------------------------------------------------
-// datos.videos es la lista del JSON. Con forEach recorremos
-// cada video uno por uno y armamos el HTML de cada tarjeta.
-// El template literal (las comillas invertidas ` `) nos deja
-// mezclar HTML con variables usando ${variable}.
-// ------------------------------------------------------------
-
 function construirPortafolio(videos) {
   const contenedor = document.getElementById('portfolioGrid');
-
   contenedor.innerHTML = videos.map(video => `
     <div class="portfolio-item ${video.destacado ? 'featured' : ''}">
       <div class="vimeo-wrap">
@@ -100,23 +116,13 @@ function construirPortafolio(videos) {
     </div>
   `).join('');
 
-  // Volver a activar el click en las covers después de generarlas
   document.querySelectorAll('.vimeo-cover').forEach(cover => {
     cover.addEventListener('click', () => cover.classList.add('hidden'));
   });
 }
 
-
-// ------------------------------------------------------------
-// EXPERIENCIA — construye las tarjetas de cada empresa
-// ------------------------------------------------------------
-// Los tags son una lista dentro de cada empresa, así que
-// usamos otro .map() adentro para construir cada tag.
-// ------------------------------------------------------------
-
 function construirExperiencia(experiencia) {
   const contenedor = document.getElementById('expTimeline');
-
   contenedor.innerHTML = experiencia.map(item => `
     <div class="exp-item reveal">
       <p class="exp-date">${item.fechas}</p>
@@ -129,18 +135,11 @@ function construirExperiencia(experiencia) {
     </div>
   `).join('');
 
-  // Volver a activar el scroll reveal en los elementos nuevos
   document.querySelectorAll('.exp-item.reveal').forEach(el => observer.observe(el));
 }
 
-
-// ------------------------------------------------------------
-// TESTIMONIOS — construye cada tarjeta de testimonio
-// ------------------------------------------------------------
-
 function construirTestimonios(testimonios) {
   const contenedor = document.getElementById('testimoniosGrid');
-
   contenedor.innerHTML = testimonios.map(t => `
     <div class="testimonio-card">
       <div class="quote-mark">"</div>
@@ -156,23 +155,10 @@ function construirTestimonios(testimonios) {
   `).join('');
 }
 
-
-// ------------------------------------------------------------
-// REDES SOCIALES — actualiza los links de contacto
-// ------------------------------------------------------------
-// Solo actualizamos los que tengan valor. Si instagram está
-// vacío (""), no mostramos nada para esa red.
-// ------------------------------------------------------------
-
 function construirRedes(redes) {
-  // WhatsApp — actualiza el href del botón que ya existe
   const btnWhatsapp = document.querySelector('a[href*="wa.me"]');
-  if (btnWhatsapp && redes.whatsapp) {
-    btnWhatsapp.href = redes.whatsapp;
-  }
-
-  // Email — actualiza todos los links de correo
-  document.querySelectorAll(`a[href*="mailto"]`).forEach(link => {
+  if (btnWhatsapp && redes.whatsapp) btnWhatsapp.href = redes.whatsapp;
+  document.querySelectorAll('a[href*="mailto"]').forEach(link => {
     if (redes.email) link.href = `mailto:${redes.email}`;
   });
 }
